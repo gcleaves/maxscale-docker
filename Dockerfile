@@ -5,10 +5,14 @@ ENV MAXSCALE_VERSION 2.1.2
 
 RUN rpm --import https://yum.mariadb.org/RPM-GPG-KEY-MariaDB \
     && yum -y install https://downloads.mariadb.com/enterprise/yzsw-dthq/generate/10.0/mariadb-enterprise-repository.rpm \
+	wget \
     && yum -y update \
-    && yum -y install maxscale-$MAXSCALE_VERSION \
+    #&& yum -y install maxscale-$MAXSCALE_VERSION \
     && yum clean all \
     && rm -rf /tmp/*
+
+RUN wget https://downloads.mariadb.com/MaxScale/$MAXSCALE_VERSION/centos/7/x86_64/maxscale-$MAXSCALE_VERSION-1.centos.7.x86_64.rpm
+RUN yum -y install ./maxscale-$MAXSCALE_VERSION-1.centos.7.x86_64.rpm
 
 # Move configuration file in directory for exports
 RUN mkdir -p /etc/maxscale.d \
