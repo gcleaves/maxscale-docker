@@ -1,6 +1,8 @@
 maxscale-docker
 ===============
 
+docker run -d -p 192.168.10.192:32000:3306 -v /tmp:/var/log -v /usr/src/maxscale-docker/conf/maxscale.idb.cnf:/etc/maxscale.d/maxscale.cnf --name maxscale gcleaves/maxscale:2.1.2 
+
 This project is a Docker container for MaxScale. 
 
 [![](https://imagelayers.io/badge/asosso/maxscale:latest.svg)](https://imagelayers.io/?images=asosso/maxscale:latest 'ImageLayers') [![Docker Repository on Quay](https://quay.io/repository/asosso/maxscale/status "Docker Repository on Quay")](https://quay.io/repository/asosso/maxscale)
