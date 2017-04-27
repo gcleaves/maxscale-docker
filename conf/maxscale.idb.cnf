@@ -45,7 +45,7 @@ router=readconnroute
 router_options=running
 servers=idb3, idb4, idb1, idb2
 user=maxscale
-passwd=FE2EDE367C5EB2BB6E895BFAF98DB0EBF64C921FFCD83AA201ED9B1D9A9B2531
+passwd=84AB7A490713A4CE36D06F2D495379CA
 filters=AddDateFix | NullSafeFix
 
 [Splitter Listener]
