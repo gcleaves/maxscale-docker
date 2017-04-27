@@ -3,25 +3,25 @@ threads=4
 
 [idb1]
 type=server
-address=dwh01.billydomain.com
+address=idb01.billydomain.com
 port=3306
 protocol=MySQLBackend
 
 [idb2]
 type=server
-address=dwh02.billydomain.com
+address=idb02.billydomain.com
 port=3306
 protocol=MySQLBackend
 
 [idb3]
 type=server
-address=dwh03.billydomain.com
+address=idb03.billydomain.com
 port=3306
 protocol=MySQLBackend
 
 [idb4]
 type=server
-address=dwh04.billydomain.com
+address=idb04.billydomain.com
 port=3306
 protocol=MySQLBackend
 
@@ -31,7 +31,7 @@ module=regexfilter
 options=ignorecase
 match=(ADDDATE\(\s*DATE_FORMAT\(\s*.*?\).*?\))
 replace=cast($1 as datetime)
-log_file=/var/log/maxscale/regexfilter.log
+#log_file=/var/log/maxscale/regexfilter.log
 
 [NullSafeFix]
 type=filter
