@@ -1,5 +1,8 @@
 maxscale-docker
 ===============
+Obfuscate password like this:
+docker run --rm -it --entrypoint=maxpasswd gcleaves/maxscale:2.1.2 /var/lib/maxscale/ "password"
+Use output instead of password within the config file.
 
 docker run -d -p 192.168.10.192:32000:3306 -v /tmp:/var/log -v /usr/src/maxscale-docker/conf/maxscale.idb.cnf:/etc/maxscale.d/maxscale.cnf --name maxscale gcleaves/maxscale:2.1.2 
 
