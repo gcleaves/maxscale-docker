@@ -19,6 +19,8 @@ RUN mkdir -p /etc/maxscale.d \
     && cp /etc/maxscale.cnf.template /etc/maxscale.d/maxscale.cnf \
     && ln -sf /etc/maxscale.d/maxscale.cnf /etc/maxscale.cnf
 
+RUN maxkeys
+
 # VOLUME for custom configuration
 VOLUME ["/etc/maxscale.d"]
 

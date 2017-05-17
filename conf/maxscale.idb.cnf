@@ -25,12 +25,38 @@ address=idb04.billydomain.com
 port=3306
 protocol=MySQLBackend
 
+[CrossJoinFix1]
+type=filter
+module=regexfilter
+options=ignorecase
+match=CROSS JOIN\s*\(\s*SELECT
+replace=NATURAL JOIN (SELECT 'gtc_link' gtc_link,
+log_file=/var/log/maxscale/regexfilter.log
+log_trace=true
+
+[CrossJoinFix2]
+type=filter
+module=regexfilter
+options=ignorecase
+match=(?s)\(\s*SELECT(.*NATURAL)
+replace=(SELECT  'gtc_link' gtc_link, $1
+log_file=/var/log/maxscale/regexfilter.log
+log_trace=true
+
 [AddDateFix]
 type=filter
 module=regexfilter
 options=ignorecase
-match=(ADDDATE\(\s*DATE_FORMAT\(\s*.*?\).*?\))
+match=(date_format.*?%.*?\))
 replace=cast($1 as datetime)
+#log_file=/var/log/maxscale/regexfilter.log
+
+[SumCount]
+type=filter
+module=regexfilter
+options=ignorecase
+match=sum\(1\)
+replace=count(*)
 #log_file=/var/log/maxscale/regexfilter.log
 
 [NullSafeFix]
@@ -45,8 +71,8 @@ router=readconnroute
 router_options=running
 servers=idb3, idb4, idb1, idb2
 user=maxscale
-passwd=84AB7A490713A4CE36D06F2D495379CA
-filters=AddDateFix | NullSafeFix
+passwd=BA1AF4AF13FCC205D4BB51A0A03D7C3B
+filters=AddDateFix | NullSafeFix | SumCount | CrossJoinFix1 | CrossJoinFix2
 
 [Splitter Listener]
 type=listener
