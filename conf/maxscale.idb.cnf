@@ -31,23 +31,23 @@ module=regexfilter
 options=ignorecase
 match=CROSS JOIN\s*\(\s*SELECT
 replace=NATURAL JOIN (SELECT 'gtc_link' gtc_link,
-log_file=/var/log/maxscale/regexfilter.log
-log_trace=true
+#log_file=/var/log/maxscale/regexfilter.log
+#log_trace=true
 
 [CrossJoinFix2]
 type=filter
 module=regexfilter
 options=ignorecase
-match=(?s)\(\s*SELECT(.*NATURAL)
+match=(?s)\(\s*SELECT(.*NATURAL JOIN)
 replace=(SELECT  'gtc_link' gtc_link, $1
-log_file=/var/log/maxscale/regexfilter.log
-log_trace=true
+#log_file=/var/log/maxscale/regexfilter.log
+#log_trace=true
 
 [AddDateFix]
 type=filter
 module=regexfilter
 options=ignorecase
-match=(date_format.*?%.*?\))
+match=(date_format.*?%Y-%m-.*?\))
 replace=cast($1 as datetime)
 #log_file=/var/log/maxscale/regexfilter.log
 
@@ -72,7 +72,7 @@ router_options=running
 servers=idb3, idb4, idb1, idb2
 user=maxscale
 passwd=BA1AF4AF13FCC205D4BB51A0A03D7C3B
-filters=AddDateFix | NullSafeFix | SumCount | CrossJoinFix1 | CrossJoinFix2
+filters=NullSafeFix | CrossJoinFix1 | CrossJoinFix2
 
 [Splitter Listener]
 type=listener
