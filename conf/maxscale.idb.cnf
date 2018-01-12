@@ -30,7 +30,7 @@ type=filter
 module=regexfilter
 options=ignorecase
 match=CROSS JOIN\s*\(\s*SELECT
-replace=NATURAL JOIN (SELECT 'gtc_link' gtc_link,
+replace=NATURAL JOIN/*cjf1*/ (SELECT 'gtc_link' gtc_link,
 #log_file=/var/log/maxscale/regexfilter.log
 #log_trace=true
 
@@ -38,7 +38,7 @@ replace=NATURAL JOIN (SELECT 'gtc_link' gtc_link,
 type=filter
 module=regexfilter
 options=ignorecase
-match=(?s)\(\s*SELECT(.*NATURAL JOIN)
+match=(?s)\(\s*SELECT(.*NATURAL JOIN)/*cjf1*/
 replace=(SELECT  'gtc_link' gtc_link, $1
 #log_file=/var/log/maxscale/regexfilter.log
 #log_trace=true
@@ -59,20 +59,44 @@ match=sum\(1\)
 replace=count(*)
 #log_file=/var/log/maxscale/regexfilter.log
 
+[TEST]
+type=filter
+module=regexfilter
+options=ignorecase
+match='caca'
+replace='pipi'
+
 [NullSafeFix]
 type=filter
 module=regexfilter
 match=<=>
 replace==
+#log_file=/var/log/maxscale/regexfilter.log
+
+[AccountManagerSuspicion]
+type=filter
+module=regexfilter
+options=ignorecase
+match=(?s)(SELECT\s+`dim_advertiser`.`account_manager_name_now_upper`\s+AS\s+`account_manager_name_now_upper`\s+FROM\s+`fact_susp_conversions`\s+LEFT\s+JOIN\s+`dim_offer`\s+ON\s+\(`fact_susp_conversions`.`offer_id`\s+=\s+`dim_offer`.`natural_key`\)\s+LEFT\s+JOIN\s+`dim_advertiser`\s+ON\s+\(`fact_susp_conversions`.`advertiser_id`\s+=\s+`dim_advertiser`.`natural_key`\)\s+LEFT\s+JOIN\s+`dim_publisher`\s+ON\s+\(`fact_susp_conversions`.`publisher_id`\s+=\s+`dim_publisher`.`natural_key`\)\s+LEFT\s+JOIN\s+`dim_campaign`\s+ON\s+\(`fact_susp_conversions`.`campaign_id`\s+=\s+`dim_campaign`.`natural_key`\)\s+WHERE\s+\(\(`dim_advertiser`.`last_version`\s+=\s+1\)\s+AND\s+\(`dim_campaign`.`last_version`\s+=\s+1\)\s+AND\s+\(`dim_publisher`.`last_version`\s+=\s+1\)\s+AND\s+\(`dim_offer`.`last_version`\s+=\s+1\)\)\s+GROUP\s+BY\s+1\s+ORDER\s+BY\s+`account_manager_name_now_upper`\s+ASC)
+replace=SELECT distinct(account_manager_name_now_upper) FROM dim_advertiser WHERE last_version = 1 and account_manager_name_now_upper is not null order by 1 
+#log_file=/var/log/maxscale/regexfilter.log
+
+[OfferRevenueSuspicion]
+type=filter
+module=regexfilter
+options=ignorecase
+match=INNER JOIN\s*\(\s*SELECT `fact_susp_conversions`.`offer_id` AS `offer_id`,\s*SUM\(`fact_susp_conversions`.`revenue`\) AS `__measure__0`\s*FROM `fact_susp_conversions`\s*LEFT JOIN `dim_conversion_suspicion` ON \(`fact_susp_conversions`.`impression_id` = `dim_conversion_suspicion`.`impression_id`\)\s*LEFT JOIN `dim_offer_suspicion` ON \(\(`fact_susp_conversions`.`offer_id` = `dim_offer_suspicion`.`offer_id`\) AND \(`dim_conversion_suspicion`.`suspicion_code` = `dim_offer_suspicion`.`suspicion_code`\)\)\s*LEFT JOIN `dim_advertiser_suspicion` ON \(\(`fact_susp_conversions`.`advertiser_id` = `dim_advertiser_suspicion`.`advertiser_id`\) AND \(`dim_conversion_suspicion`.`suspicion_code` = `dim_advertiser_suspicion`.`suspicion_code`\)\)\s*LEFT JOIN `dim_offer` ON \(`fact_susp_conversions`.`offer_id` = `dim_offer`.`natural_key`\)\s*LEFT JOIN `dim_advertiser` ON \(`fact_susp_conversions`.`advertiser_id` = `dim_advertiser`.`natural_key`\)\s*LEFT JOIN `dim_publisher` ON \(`fact_susp_conversions`.`publisher_id` = `dim_publisher`.`natural_key`\)\s*LEFT JOIN `dim_campaign` ON \(`fact_susp_conversions`.`campaign_id` = `dim_campaign`.`natural_key`\)\s*WHERE \(\(`dim_advertiser`.`last_version` = 1\) AND \(`dim_campaign`.`last_version` = 1\) AND \(`dim_publisher`.`last_version` = 1\) AND \(`dim_offer`.`last_version` = 1\) AND (.*)\)\s*GROUP BY 1
+replace=INNER JOIN (SELECT `fact_susp_conversions`.`offer_id` AS `offer_id`, SUM(`fact_susp_conversions`.`revenue`) AS `__measure__0` FROM `fact_susp_conversions` WHERE $1 GROUP BY 1
+#log_file=/var/log/maxscale/regexfilter.log
 
 [Splitter Service]
 type=service
 router=readconnroute
 router_options=running
-servers=idb3, idb4, idb1, idb2
+servers=idb2, idb3, idb4, idb1
 user=maxscale
-passwd=BA1AF4AF13FCC205D4BB51A0A03D7C3B
-filters=NullSafeFix | CrossJoinFix1 | CrossJoinFix2
+passwd=402716559FA6EEB76122ADAAC058645A
+filters=NullSafeFix | CrossJoinFix1 | CrossJoinFix2 | AccountManagerSuspicion | TEST | OfferRevenueSuspicion
 
 [Splitter Listener]
 type=listener

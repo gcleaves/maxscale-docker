@@ -1,7 +1,7 @@
 FROM centos:7
 MAINTAINER Andrea Sosso <andrea@sosso.me>
 
-ENV MAXSCALE_VERSION 2.1.2
+ENV MAXSCALE_VERSION 2.1.13
 
 RUN rpm --import https://yum.mariadb.org/RPM-GPG-KEY-MariaDB \
     && yum -y install https://downloads.mariadb.com/enterprise/yzsw-dthq/generate/10.0/mariadb-enterprise-repository.rpm \
@@ -20,6 +20,7 @@ RUN mkdir -p /etc/maxscale.d \
     && ln -sf /etc/maxscale.d/maxscale.cnf /etc/maxscale.cnf
 
 RUN maxkeys
+RUN maxpasswd /var/lib/maxscale/ "%1&b0bZitvWsOV"
 
 # VOLUME for custom configuration
 VOLUME ["/etc/maxscale.d"]
